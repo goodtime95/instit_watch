@@ -17,3 +17,8 @@ FRED_RATES_SERIES = {
     "Fed Funds Effective Rate": "FEDFUNDS",
     "SOFR": "SOFR",
 }
+
+CENTRAL_BANK_RSS_FEEDS = {
+    "Federal Reserve": "https://www.federalreserve.gov/feeds/press_all.xml",
+    "ECB": "https://www.ecb.europa.eu/rss/press.html",
+}

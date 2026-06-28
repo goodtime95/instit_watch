@@ -47,8 +47,14 @@ def collect_central_bank_node(
     state["central_bank_data"] = collect_central_bank_data()
     state["sources"].append(
         {
-            "name": "Mock central bank dataset",
-            "url": "local://mock-central-bank-data",
+            "name": "Federal Reserve RSS",
+            "url": "https://www.federalreserve.gov/feeds/press_all.xml",
+        }
+    )
+    state["sources"].append(
+        {
+            "name": "ECB RSS",
+            "url": "https://www.ecb.europa.eu/rss/press.html",
         }
     )
     return state
