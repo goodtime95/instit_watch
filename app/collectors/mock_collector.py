@@ -1,7 +1,7 @@
 from datetime import date
 from app.graph.state import InstitutionalBriefState
 from app.collectors.market_collector import collect_market_data
-
+from app.collectors.rates_collector import collect_rates_data
 
 
 def collect_mock_data(state: InstitutionalBriefState) -> InstitutionalBriefState:
@@ -14,11 +14,7 @@ def collect_mock_data(state: InstitutionalBriefState) -> InstitutionalBriefState
 
     state["market_data"] = state["market_data"] = collect_market_data()
     
-    state["rates_data"] = {
-        "US 2Y": {"yield_pct": 4.72, "daily_change_bps": 3},
-        "US 10Y": {"yield_pct": 4.28, "daily_change_bps": 1},
-        "EUR 10Y Bund": {"yield_pct": 2.45, "daily_change_bps": -2},
-    }
+    state["rates_data"] = collect_rates_data()
 
     state["macro_data"] = {
         "today_calendar": [
@@ -40,14 +36,9 @@ def collect_mock_data(state: InstitutionalBriefState) -> InstitutionalBriefState
     }
 
     state["sources"] = [
-        {
-            "name": "Yahoo Finance",
-            "url": "https://finance.yahoo.com/",
-        },
-        {
-            "name": "Mock rates and macro dataset",
-            "url": "local://mock-rates-macro-data",
-        },
+        {"name": "Yahoo Finance", "url": "https://finance.yahoo.com/"},
+        {"name": "FRED", "url": "https://fred.stlouisfed.org/"},
+        {"name": "Mock macro and central bank dataset", "url": "local://mock-macro-cb-data"},
     ]
 
     return state

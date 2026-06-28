@@ -9,3 +9,11 @@ DEFAULT_COMMODITIES = {
     "Brent": "BZ=F",
     "Gold": "GC=F",
 }
+
+FRED_RATES_SERIES = {
+    "US 2Y": "DGS2",
+    "US 10Y": "DGS10",
+    "US 30Y": "DGS30",
+    "Fed Funds Effective Rate": "FEDFUNDS",
+    "SOFR": "SOFR",
+}

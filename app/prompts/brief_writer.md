@@ -23,3 +23,5 @@ Contraintes :
 - Ne présente jamais une donnée mockée comme une donnée de marché réelle.
 - Si une section contient des données partielles, écris "données partielles".
 - Ne donne pas de niveau de confiance excessif.
+- Ne qualifie jamais une donnée de "stable", "en hausse" ou "en baisse" si la variation n'est pas explicitement fournie.
+- Pour les taux FRED, si seule une valeur et une date sont fournies, écris uniquement le niveau et la date.
