@@ -1,57 +1,51 @@
+import json
+from pathlib import Path
+
+from langchain_openai import ChatOpenAI
+from langchain_core.messages import HumanMessage, SystemMessage
+
 from app.graph.state import InstitutionalBriefState
+from config.settings import settings
 
-def _format_sources(sources: list[dict[str, str]]) -> str:
-    if not sources:
-        return "- Aucune source disponible"
-
-    return "\n".join(
-        f"- {source.get('name', 'Source inconnue')} : {source.get('url', 'URL indisponible')}"
-        for source in sources
-    )
 
 def write_brief(state: InstitutionalBriefState) -> InstitutionalBriefState:
     """
-    Mock institutional brief writer for Sprint 1.
-    No LLM call yet.
+    LLM-based institutional brief writer.
     """
 
-    market_data = state["market_data"]
-    rates_data = state["rates_data"]
-    macro_data = state["macro_data"]
-    central_bank_data = state["central_bank_data"]
-    news_data = state["news_data"]
+    llm = ChatOpenAI(
+        model=settings.openai_model,
+        temperature=settings.openai_temperature,
+        api_key=settings.openai_api_key,
+    )
 
-    brief = f"""
-Point institutionnel quotidien — {state["run_date"]}
+    system_prompt = Path("app/prompts/brief_writer.md").read_text(encoding="utf-8")
 
-1. Synthèse exécutive
-Les marchés actions évoluent de manière contrastée dans ce jeu de données de test. Les investisseurs restent attentifs aux anticipations de politique monétaire et aux prochains indicateurs macroéconomiques.
+    user_payload = {
+        "run_date": state["run_date"],
+        "market_data": state["market_data"],
+        "rates_data": state["rates_data"],
+        "macro_data": state["macro_data"],
+        "central_bank_data": state["central_bank_data"],
+        "news_data": state["news_data"],
+        "sources": state["sources"],
+        "warnings": state["warnings"],
+    }
 
-2. Marchés actions
-S&P 500 : {market_data["equities"]["S&P 500"]["daily_change_pct"]}%
-Nasdaq : {market_data["equities"]["Nasdaq"]["daily_change_pct"]}%
-Euro Stoxx 50 : {market_data["equities"]["Euro Stoxx 50"]["daily_change_pct"]}%
-CAC 40 : {market_data["equities"]["CAC 40"]["daily_change_pct"]}%
+    response = llm.invoke(
+        [
+            SystemMessage(content=system_prompt),
+            HumanMessage(
+                content=(
+                    "Voici les données disponibles pour le brief institutionnel du jour. "
+                    "Rédige le brief en respectant strictement les contraintes du prompt système.\n\n"
+                    f"{json.dumps(user_payload, ensure_ascii=False, indent=2)}"
+                )
+            ),
+        ]
+    )
 
-3. Taux
-US 2Y : {rates_data["US 2Y"]["yield_pct"]}% ({rates_data["US 2Y"]["daily_change_bps"]} bps)
-US 10Y : {rates_data["US 10Y"]["yield_pct"]}% ({rates_data["US 10Y"]["daily_change_bps"]} bps)
-Bund 10Y : {rates_data["EUR 10Y Bund"]["yield_pct"]}% ({rates_data["EUR 10Y Bund"]["daily_change_bps"]} bps)
-
-4. Macro / banques centrales
-Calendrier macro du jour : {", ".join(macro_data["today_calendar"])}
-Fed : {central_bank_data["fed"]}
-BCE : {central_bank_data["ecb"]}
-
-5. News
-- {news_data["headlines"][0]}
-- {news_data["headlines"][1]}
-
-6. Sources
-{_format_sources(state["sources"])}
-""".strip()
-
-    state["draft_brief"] = brief
-    state["final_brief"] = brief
+    state["draft_brief"] = response.content
+    state["final_brief"] = response.content
 
     return state
