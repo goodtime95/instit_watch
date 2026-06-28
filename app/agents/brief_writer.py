@@ -1,5 +1,13 @@
 from app.graph.state import InstitutionalBriefState
 
+def _format_sources(sources: list[dict[str, str]]) -> str:
+    if not sources:
+        return "- Aucune source disponible"
+
+    return "\n".join(
+        f"- {source.get('name', 'Source inconnue')} : {source.get('url', 'URL indisponible')}"
+        for source in sources
+    )
 
 def write_brief(state: InstitutionalBriefState) -> InstitutionalBriefState:
     """
@@ -40,7 +48,7 @@ BCE : {central_bank_data["ecb"]}
 - {news_data["headlines"][1]}
 
 6. Sources
-- {state["sources"][0]["name"]} : {state["sources"][0]["url"]}
+{_format_sources(state["sources"])}
 """.strip()
 
     state["draft_brief"] = brief
