@@ -1,5 +1,7 @@
 from datetime import date
 from app.graph.state import InstitutionalBriefState
+from app.collectors.market_collector import collect_market_data
+
 
 
 def collect_mock_data(state: InstitutionalBriefState) -> InstitutionalBriefState:
@@ -10,19 +12,8 @@ def collect_mock_data(state: InstitutionalBriefState) -> InstitutionalBriefState
 
     state["run_date"] = date.today().isoformat()
 
-    state["market_data"] = {
-        "equities": {
-            "S&P 500": {"level": 5450.0, "daily_change_pct": 0.42},
-            "Nasdaq": {"level": 17800.0, "daily_change_pct": 0.65},
-            "Euro Stoxx 50": {"level": 4950.0, "daily_change_pct": -0.18},
-            "CAC 40": {"level": 7650.0, "daily_change_pct": -0.22},
-        },
-        "commodities": {
-            "Brent": {"price": 84.2, "daily_change_pct": 0.31},
-            "Gold": {"price": 2335.0, "daily_change_pct": -0.12},
-        },
-    }
-
+    state["market_data"] = state["market_data"] = collect_market_data()
+    
     state["rates_data"] = {
         "US 2Y": {"yield_pct": 4.72, "daily_change_bps": 3},
         "US 10Y": {"yield_pct": 4.28, "daily_change_bps": 1},
@@ -50,9 +41,13 @@ def collect_mock_data(state: InstitutionalBriefState) -> InstitutionalBriefState
 
     state["sources"] = [
         {
-            "name": "Mock market dataset",
-            "url": "local://mock-market-data",
-        }
+            "name": "Yahoo Finance",
+            "url": "https://finance.yahoo.com/",
+        },
+        {
+            "name": "Mock rates and macro dataset",
+            "url": "local://mock-rates-macro-data",
+        },
     ]
 
     return state
