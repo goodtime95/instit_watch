@@ -13,7 +13,6 @@ def review_brief(state: InstitutionalBriefState) -> InstitutionalBriefState:
     forbidden_terms = [
         "acheter absolument",
         "vendre absolument",
-        "garanti",
         "sans risque",
     ]
 
