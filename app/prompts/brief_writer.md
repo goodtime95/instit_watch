@@ -25,3 +25,12 @@ Contraintes :
 - Ne donne pas de niveau de confiance excessif.
 - Ne qualifie jamais une donnée de "stable", "en hausse" ou "en baisse" si la variation n'est pas explicitement fournie.
 - Pour les taux FRED, si seule une valeur et une date sont fournies, écris uniquement le niveau et la date.
+
+Règles spécifiques aux taux :
+- Pour les taux FRED, utilise value, date, previous_value, previous_date, change_bps et staleness_days si disponibles.
+- Ne parle de hausse ou de baisse que si change_bps est fourni.
+- Si change_bps est positif, indique une hausse de X points de base.
+- Si change_bps est négatif, indique une baisse de X points de base.
+- Si change_bps vaut 0, indique que le taux est inchangé par rapport à l'observation précédente.
+- Si staleness_days est supérieur à 3, précise que la donnée est datée.
+- Ne dis jamais "proche de", "stable" ou "peu de variation" sans t'appuyer sur change_bps.
